@@ -6,30 +6,39 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Mapping as ORM;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\game;
 use AppBundle\Entity\team;
 use AppBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Request;
 
 class teamController extends Controller
 {
     /**
      * @Route("/addTeam")
+     *@Template("@App/team/add_team.html.twig")
      */
-    public function addTeamAction()
+    public function addTeamAction(Request $request)
     {
-        return $this->render('@App/team/add_team.html.twig', array(
-            // ...
-        ));
+$newTeam = new Team();
+$newTeam->setName('team testowy');
+$newTeam->setPassword("aaa");
+$newTeam->setLogo("ofofof");
+$em=$this->getDoctrine()->getManager();
+$em->persist($newTeam);
+$em->flush();
+return new Response ("created new team with id ".$newTeam->getId());
     }
 
     /**
-     * @Route("/showTeam")
+     * @Route("/showTeam/{id}")
+     *@Template("@App/team/show_team.html.twig")
      */
-    public function showTeamAction()
+    public function showTeamAction($id)
     {
-        return $this->render('AppBundle:team:show_team.html.twig', array(
-            // ...
-        ));
+    $repository=$this->getDoctrine()->getRepository('AppBundle:team');
+    $team=$repository->find($id);
+    return new Response('wczytana drużyna to '.$team->getName());
     }
 
     /**
