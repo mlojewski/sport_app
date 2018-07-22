@@ -21,15 +21,23 @@ class teamController extends Controller
     public function addTeamAction(Request $request)
     {
 $newTeam = new Team();
-$newTeam->setName('team testowy');
-$newTeam->setPassword("aaa");
-$newTeam->setLogo("ofofof");
+$newTeam->setName($request->request->get('name'));
+$newTeam->setPassword($request->request->get('password'));
+$newTeam->setLogo($request->request->get('logo'));
 $em=$this->getDoctrine()->getManager();
 $em->persist($newTeam);
 $em->flush();
-return new Response ("created new team with id ".$newTeam->getId());
+return new Response ("added new team with id ".$newTeam->getId());
     }
+    /**
+     * @Route("/createTeam")
+     *@Template("@App/team/create_team.html.twig")
+     */
 
+public function createTeamAction()
+{
+  # code...
+}
     /**
      * @Route("/showTeam/{id}")
      *@Template("@App/team/show_team.html.twig")
@@ -43,22 +51,30 @@ return new Response ("created new team with id ".$newTeam->getId());
 
     /**
      * @Route("/showAllTeams")
+     *@Template("@App/team/show_all_teams.html.twig")
      */
     public function showAllTeamsAction()
     {
-        return $this->render('AppBundle:team:show_all_teams.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:team');
+        $allTeams=$repository->findAll();
+        return['allTeams'=>$allTeams];
     }
 
     /**
-     * @Route("/deleteTeam")
+     * @Route("/deleteTeam/{id}")
+     *@Template("@App/team/delete_team.html.twig")
      */
-    public function deleteTeamAction()
+    public function deleteTeamAction($id)
     {
-        return $this->render('AppBundle:team:delete_team.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:team');
+        $teamToDelete=$repository->find($id);
+        $em=$this->getDoctrine()->getManager();
+        if ($teamToDelete) {
+          $em->remove($teamToDelete);
+          $em->flush();
+          return new Response ("usunięto drużynę o id = $id");
+        }
+        return new Response ("nie ma takiej drużyny");
     }
 
 }
