@@ -20,14 +20,14 @@ class teamController extends Controller
      */
     public function addTeamAction(Request $request)
     {
-$newTeam = new Team();
-$newTeam->setName($request->request->get('name'));
-$newTeam->setPassword($request->request->get('password'));
-$newTeam->setLogo($request->request->get('logo'));
-$em=$this->getDoctrine()->getManager();
-$em->persist($newTeam);
-$em->flush();
-return new Response ("added new team with id ".$newTeam->getId());
+    $newTeam = new Team();
+    $newTeam->setName($request->request->get('name'));
+    $newTeam->setPassword($request->request->get('password'));
+    $newTeam->setLogo($request->request->get('logo'));
+    $em=$this->getDoctrine()->getManager();
+    $em->persist($newTeam);
+    $em->flush();
+    return new Response ("added new team with id ".$newTeam->getId());
     }
     /**
      * @Route("/createTeam")
