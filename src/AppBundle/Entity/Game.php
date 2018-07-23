@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * game
+ * Game
  *
  * @ORM\Table(name="game")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\gameRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\GameRepository")
  */
-class game
+class Game
 {
     /**
      * @var int
@@ -24,16 +24,16 @@ class game
     /**
      * @var string
      *
-     * @ORM\Column(name="home", type="string", length=255)
+     * @ORM\Column(name="homeTeam", type="string", length=255)
      */
-    private $home;
+    private $homeTeam;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="away", type="string", length=255)
+     * @ORM\Column(name="awayTeam", type="string", length=255)
      */
-    private $away;
+    private $awayTeam;
 
     /**
      * @var int
@@ -55,12 +55,13 @@ class game
      * @ORM\Column(name="result", type="smallint")
      */
     private $result;
+
     /**
-     * @var float
+     * @var \DateTime
      *
-     * @ORM\Column(name="hour", type="float")
+     * @ORM\Column(name="date", type="datetime")
      */
-    private $hour;
+    private $date;
 
     /**
      * @var string
@@ -68,13 +69,6 @@ class game
      * @ORM\Column(name="description", type="string", length=2000)
      */
     private $description;
-
-    /**
-     * @var date
-     *
-     * @ORM\Column(name="date", type="date")
-     */
-    private $date;
 
 
     /**
@@ -88,51 +82,51 @@ class game
     }
 
     /**
-     * Set home
+     * Set homeTeam
      *
-     * @param string $home
+     * @param string $homeTeam
      *
-     * @return game
+     * @return Game
      */
-    public function setHome($home)
+    public function setHomeTeam($homeTeam)
     {
-        $this->home = $home;
+        $this->homeTeam = $homeTeam;
 
         return $this;
     }
 
     /**
-     * Get home
+     * Get homeTeam
      *
      * @return string
      */
-    public function getHome()
+    public function getHomeTeam()
     {
-        return $this->home;
+        return $this->homeTeam;
     }
 
     /**
-     * Set away
+     * Set awayTeam
      *
-     * @param string $away
+     * @param string $awayTeam
      *
-     * @return game
+     * @return Game
      */
-    public function setAway($away)
+    public function setAwayTeam($awayTeam)
     {
-        $this->away = $away;
+        $this->awayTeam = $awayTeam;
 
         return $this;
     }
 
     /**
-     * Get away
+     * Get awayTeam
      *
      * @return string
      */
-    public function getAway()
+    public function getAwayTeam()
     {
-        return $this->away;
+        return $this->awayTeam;
     }
 
     /**
@@ -140,7 +134,7 @@ class game
      *
      * @param integer $scoreHome
      *
-     * @return game
+     * @return Game
      */
     public function setScoreHome($scoreHome)
     {
@@ -164,7 +158,7 @@ class game
      *
      * @param integer $scoreAway
      *
-     * @return game
+     * @return Game
      */
     public function setScoreAway($scoreAway)
     {
@@ -188,7 +182,7 @@ class game
      *
      * @param integer $result
      *
-     * @return game
+     * @return Game
      */
     public function setResult($result)
     {
@@ -208,59 +202,11 @@ class game
     }
 
     /**
-     * Set hour
-     *
-     * @param float $hour
-     *
-     * @return game
-     */
-    public function setHour($hour)
-    {
-        $this->hour = $hour;
-
-        return $this;
-    }
-
-    /**
-     * Get hour
-     *
-     * @return float
-     */
-    public function getHour()
-    {
-        return $this->hour;
-    }
-
-    /**
-     * Set description
-     *
-     * @param string $description
-     *
-     * @return game
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Get description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
      * Set date
      *
      * @param \DateTime $date
      *
-     * @return game
+     * @return Game
      */
     public function setDate($date)
     {
@@ -278,4 +224,29 @@ class game
     {
         return $this->date;
     }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Game
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }
+

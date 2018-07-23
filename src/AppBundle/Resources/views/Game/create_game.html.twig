@@ -1,16 +1,7 @@
-{% extends "base.html.twig" %}
+{% extends "::base.html.twig" %}
 
 {% block title %}AppBundle:Game:createGame{% endblock %}
 
 {% block body %}
 <h1>Welcome to the Game:createGame page</h1>
-
-
-<form action ="addGame" method ="POST">
-  <input type "string" name = "gameDate">
-
-
-  <input type = "submit" value = "register">
-</form>
-
 {% endblock %}

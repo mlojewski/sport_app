@@ -3,65 +3,48 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Mapping as ORM;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use AppBundle\Entity\game;
-use AppBundle\Entity\team;
-use AppBundle\Entity\User;
-use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class GameController extends Controller
 {
     /**
-     * @Route("/addGame")
-     *@Template("@App/Game/add_game.html.twig")
-     */
-    public function addGameAction(Request $request)
-    {
-      $repositoryTeam = $this->getDoctrine()->getRepository('AppBundle:team');
-      $teams=$repositoryTeam->findAll();
-
-      $em=$this->getDoctrine()->getManager();
-      if (count($request->request)!=0) {
-        $newGame=new Game();
-        // $homeTeam=$repositoryTeam->find($request->request->get('homeTeam'));
-        // $newGame->setHome($homeTeam);
-        // $awayTeam=$repositoryTeam->find($request->request->get('awayTeam'));
-        // $newGame->setAway($awayTeam);
-        $newGame->setHome("teamA");
-        $newGame->setAway("teamB");
-        $newGame->setScoreHome(0);
-        $newGame->setScoreAway(0);
-        $newGame->setResult(0);
-        $newGame->setHour(0);
-        $newGame->setDescription('blank');
-        $newGame->setDate("232332");
-        $em->persist($newGame);
-        $em->flush();
-        return new Response ("added new game with id ".$newGame->getId());
-      }
-    }
-
-    /**
      * @Route("/createGame")
-     *@Template("@App/Game/create_game.html.twig")
      */
     public function createGameAction()
     {
-
+        return $this->render('AppBundle:Game:create_game.html.twig', array(
+            // ...
+        ));
     }
+
     /**
-     * @Route("/showGame/{id}")
-     *@Template("@App/Game/show_game.html.twig")
+     * @Route("/addGame")
+     */
+    public function addGameAction()
+    {
+        return $this->render('AppBundle:Game:add_game.html.twig', array(
+            // ...
+        ));
+    }
+
+    /**
+     * @Route("/showGame")
      */
     public function showGameAction()
     {
-        $repository=$this->getDoctrine()->getRepository('AppBundle:game');
-        $gameId=$repository->find($id);
+        return $this->render('AppBundle:Game:show_game.html.twig', array(
+            // ...
+        ));
+    }
 
-        // TODO: skończyć!
+    /**
+     * @Route("/showAllGames")
+     */
+    public function showAllGamesAction()
+    {
+        return $this->render('AppBundle:Game:show_all_games.html.twig', array(
+            // ...
+        ));
     }
 
     /**
@@ -73,5 +56,25 @@ class GameController extends Controller
             // ...
         ));
     }
-// TODO: dodać akcję i twigi wgrywania meczów danej drużyny oraz modyfikowanie opisu meczu
+
+    /**
+     * @Route("/showTeamGames")
+     */
+    public function showTeamGamesAction()
+    {
+        return $this->render('AppBundle:Game:show_team_games.html.twig', array(
+            // ...
+        ));
+    }
+
+    /**
+     * @Route("/modifyGame")
+     */
+    public function modifyGameAction()
+    {
+        return $this->render('AppBundle:Game:modify_game.html.twig', array(
+            // ...
+        ));
+    }
+
 }
