@@ -3,28 +3,52 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\Mapping as ORM;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use AppBundle\Entity\game;
+use AppBundle\Entity\team;
+use AppBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Request;
 
 class GameController extends Controller
 {
     /**
      * @Route("/createGame")
+     *@Template("@App/Game/create_game.html.twig")
      */
     public function createGameAction()
     {
-        return $this->render('AppBundle:Game:create_game.html.twig', array(
-            // ...
-        ));
+
     }
 
     /**
      * @Route("/addGame")
+        *@Template("@App/Game/add_game.html.twig")
      */
-    public function addGameAction()
+    public function addGameAction(Request $request)
     {
-        return $this->render('AppBundle:Game:add_game.html.twig', array(
-            // ...
-        ));
+      $repositoryTeam=$this->getDoctrine()->getRepository('AppBundle:team');
+      $allTeams=$repositoryTeam->findAll();
+      $em=$this->getDoctrine()->getManager();
+      if (count($request->request)!=0) {
+        $newGame= new Game();
+        $homeTeam=$repositoryTeam->find($request->request->get('homeTeam'));
+        $newGame->setHomeTeam($homeTeam);
+        $awayTeam=$repositoryTeam->find($request->request->get('awayTeam'));
+        $newGame->setAwayTeam($awayTeam);
+        $newGame->setScoreHome($request->request->get('scoreHome'));
+        $newGame->setScoreAway($request->request->get('scoreAway'));
+        $newGame->setResult($request->request->get('result'));
+        //rezultat meczu to 1 wygrana gospodarzy 0 remis 2 wygrana gości
+        $newGame->setDate($request->request->get('date'));
+        $newGame->setDescription($request->request->get('description'));
+        $em->persist($newGame);
+        $em->flush();
+
+      }
+      return ['allTeams'=>$allTeams];
     }
 
     /**

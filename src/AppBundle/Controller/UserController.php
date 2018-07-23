@@ -41,33 +41,43 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/deleteUser")
+     * @Route("/deleteUser/{id}")
+     *@Template("@App/User/delete_user.html.twig")
      */
     public function deleteUserAction()
     {
-        return $this->render('AppBundle:User:delete_user.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:User');
+        $userToDelete=$repository->findId($id);
+        $em=$this->getDoctrine()->getManager();
+        if ($userToDelete) {
+          $em->remove($userToDelete);
+          $em->flush();
+          return new Response("usunięto użytkownika o id: $id");
+        }
+        return new Response("nie ma takiego użytkownika");
     }
 
     /**
-     * @Route("/showUser")
+     * @Route("/showUser/{id}")
+     *@Template("@App/User/show_user.html.twig")
      */
-    public function showUserAction()
+    public function showUserAction($id)
     {
-        return $this->render('AppBundle:User:show_user.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:User');
+        $user=$repository->find($id);
+        return new Response('wczytany użytkownik to: '.$user->getName().' '.$user->getLastName());
+
     }
 
     /**
      * @Route("/showAllUsers")
+     *@Template("@App/User/show_all_users.html.twig")
      */
     public function showAllUsersAction()
     {
-        return $this->render('AppBundle:User:show_all_users.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:User');
+        $allUsers=$repository->findAll();
+        return['allUsers'=>$allUsers];
     }
 
 }

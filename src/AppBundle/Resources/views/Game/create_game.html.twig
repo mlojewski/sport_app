@@ -1,7 +1,31 @@
-{% extends "::base.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block title %}AppBundle:Game:createGame{% endblock %}
 
 {% block body %}
 <h1>Welcome to the Game:createGame page</h1>
+<form action ="addGAme" method ="POST">
+  Select home team:
+  <select name="homeTeam"
+{%for team in allTeams%}
+<option value="{{team.id}}">{{team.name}}</option>
+{%endfor%}
+</select>
+Select away team:
+<select name="awayTeam"
+{%for team in allTeams%}
+<option value="{{team.id}}">{{team.name}}</option>
+{%endfor%}
+</select>
+Submit home score <input type = "number" min="0" step="1" name "scoreHome">
+Submit away score <input type = "number" min="0" step="1" name "scoreAway">
+Mark game result
+<input type = "radio" name ="result" value = "1"> home win</input>
+<input type = "radio" name ="result" value = "0"> draw</input>
+<input type = "radio" name ="result" value = "2"> away win</input>
+Submit game date and time
+<input type="datetime-local" name="date">
+Desribe the game
+<input type = "text" name="description" maxlength="1990">
+</form>
 {% endblock %}

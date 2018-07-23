@@ -1,7 +1,14 @@
-{% extends "::base.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block title %}AppBundle:User:showAllUsers{% endblock %}
 
 {% block body %}
 <h1>Welcome to the User:showAllUsers page</h1>
+{%for user in allUsers%}
+Imię: {{user.name}}<br>
+Nazwisko: {{user.lastName}}<br>
+email: {{user.email}}<br>
+----<br>
+{%endfor%}
 {% endblock %}
+{#todo - wpisać ifa który ściąga boola admin i wypisuje tak albo nie#}
