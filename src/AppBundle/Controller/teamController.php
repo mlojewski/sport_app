@@ -11,32 +11,40 @@ use AppBundle\Entity\game;
 use AppBundle\Entity\team;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class teamController extends Controller
 {
     /**
-     * @Route("/addTeam")
+     * @Route("/addTeam", name="addTeam")
      *@Template("@App/team/add_team.html.twig")
      */
-    public function addTeamAction(Request $request)
+    public function addTeamAction()
     {
-    $newTeam = new Team();
-    $newTeam->setName($request->request->get('name'));
-    $newTeam->setPassword($request->request->get('password'));
-    $newTeam->setLogo($request->request->get('logo'));
-    $em=$this->getDoctrine()->getManager();
-    $em->persist($newTeam);
-    $em->flush();
-    return new Response ("added new team with id ".$newTeam->getId());
+
     }
     /**
      * @Route("/createTeam")
      *@Template("@App/team/create_team.html.twig")
      */
 
-public function createTeamAction()
+public function createTeamAction(Request $request)
 {
-  # code...
+    $newTeam = new Team();
+    $form=$this->createFormBuilder($newTeam)->add('name', TextType::class)->add('password', PasswordType::class)
+    ->add('logo', TextType::class)->add('send', SubmitType::class, array('label' =>'Create Team'))->getForm();
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+      $newTeam=$form->getData();
+      $em=$this->getDoctrine()->getManager();
+      $em->persist($newTeam);
+      $em->flush();
+      return $this->redirectToRoute('addTeam');
+}
+return $this->render('@App/team/create_team.html.twig', array('form'=>$form->createView(),));
 }
     /**
      * @Route("/showTeam/{id}")

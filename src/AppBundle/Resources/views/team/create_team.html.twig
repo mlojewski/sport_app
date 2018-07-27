@@ -4,10 +4,7 @@
 
 {% block body %}
 <h1>Welcome to the team:createTeam page</h1>
-<form action ="addTeam" method ="POST">
-  Enter team name <input type = "text" name = "name"> </br>
-  Enter password <input type = "password" name = "password"></br>
-  Enter logo url <input type = "text" name = "logo"> </br>
-  register <input type = "submit" value = "click">
-</form>
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
 {% endblock %}

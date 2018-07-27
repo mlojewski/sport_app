@@ -11,33 +11,51 @@ use AppBundle\Entity\game;
 use AppBundle\Entity\team;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class UserController extends Controller
 {
   /**
-   * @Route("/addUser")
+   * @Route("/addUser", name="addUser")
    *@Template("@App/User/add_user.html.twig")
    */
   public function addUserAction(Request $request)
   {
-      $newUser= new User();
-      $newUser->setName($request->request->get('name'));
-      $newUser->setLastName($request->request->get('lastName'));
-      $newUser->setEmail($request->request->get('email'));
-      $newUser->setAdmin(false);
-      $newUser->setPassword($request->request->get('password'));
-      $em=$this->getDoctrine()->getManager();
-      $em->persist($newUser);
-      $em->flush();
-      return new Response ("added a new user with id ".$newUser->getId());
+      // $newUser= new User();
+      // $newUser->setName($request->request->get('name'));
+      // $newUser->setLastName($request->request->get('lastName'));
+      // $newUser->setEmail($request->request->get('email'));
+      // $newUser->setAdmin(false);
+      // $newUser->setPassword($request->request->get('password'));
+      // $em=$this->getDoctrine()->getManager();
+      // $em->persist($newUser);
+      // $em->flush();
+      // return new Response ("added a new user with id ".$newUser->getId());
+      // TODO: ściągnięcie ostatniego rekordu z bazy i wypisanie go
   }
     /**
      * @Route("/createUser")
      *@Template("@App/User/create_user.html.twig")
      */
-    public function CreateUserAction()
+    public function CreateUserAction(Request $request)
     {
-
+      $newUser = new User();
+      $form=$this->createFormBuilder($newUser)->add('name', TextType::class)
+      ->add('lastName', TextType::class) ->add('email', EmailType::class)->add('password', PasswordType::class)
+      ->add('send', SubmitType::class, array('label' => 'Create User'))->getForm();
+      $form->handleRequest($request);
+      if ($form->isSubmitted() && $form->isValid()) {
+        $newUser=$form->getData();
+        $newUser->setAdmin(false);
+        $em=$this->getDoctrine()->getManager();
+        $em->persist($newUser);
+        $em->flush();
+        return $this->redirectToRoute('addUser');
+      }
+      return $this->render('@App/User/create_user.html.twig', array('form'=>$form->createView(),));
     }
 
     /**

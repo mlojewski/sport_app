@@ -7,10 +7,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use AppBundle\Entity\game;
+use AppBundle\Entity\Game;
 use AppBundle\Entity\team;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class GameController extends Controller
 {
@@ -24,81 +30,95 @@ class GameController extends Controller
     }
 
     /**
-     * @Route("/addGame")
+     * @Route("/addGame", name="addGame")
         *@Template("@App/Game/add_game.html.twig")
      */
     public function addGameAction(Request $request)
     {
-      $repositoryTeam=$this->getDoctrine()->getRepository('AppBundle:team');
-      $allTeams=$repositoryTeam->findAll();
-      $em=$this->getDoctrine()->getManager();
-      if (count($request->request)!=0) {
-        $newGame= new Game();
-        $homeTeam=$repositoryTeam->find($request->request->get('homeTeam'));
-        $newGame->setHomeTeam($homeTeam);
-        $awayTeam=$repositoryTeam->find($request->request->get('awayTeam'));
-        $newGame->setAwayTeam($awayTeam);
-        $newGame->setScoreHome($request->request->get('scoreHome'));
-        $newGame->setScoreAway($request->request->get('scoreAway'));
-        $newGame->setResult($request->request->get('result'));
-        //rezultat meczu to 1 wygrana gospodarzy 0 remis 2 wygrana gości
-        $newGame->setDate($request->request->get('date'));
-        $newGame->setDescription($request->request->get('description'));
-        $em->persist($newGame);
-        $em->flush();
 
-      }
-      return ['allTeams'=>$allTeams];
     }
 
     /**
-     * @Route("/showGame")
+     * @Route("/showGame/{id}")
+     *@Template("@App/Game/show_game.html.twig")
      */
-    public function showGameAction()
+    public function showGameAction($id)
     {
-        return $this->render('AppBundle:Game:show_game.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
+        $game=$repository->find($id);
+        return new Response ('wczytany mecz to '.$game->getHomeTeam()."- ".$game->getAwayTeam()." zakończony wynikiem ".$game->getScoreHome()." : ".$game->getScoreAway());
     }
 
     /**
      * @Route("/showAllGames")
+     *@Template("@App/Game/show_all_games.html.twig")
      */
     public function showAllGamesAction()
     {
-        return $this->render('AppBundle:Game:show_all_games.html.twig', array(
-            // ...
-        ));
+        $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
+        $allGames=$repository->findAll();
+        return ['allGames' => $allGames];
     }
 
     /**
-     * @Route("/deleteGame")
+     * @Route("/deleteGame/{id}")
+     *@Template("@App/Game/delete_game.html.twig")
      */
-    public function deleteGameAction()
+    public function deleteGameAction($id)
     {
-        return $this->render('AppBundle:Game:delete_game.html.twig', array(
-            // ...
-        ));
+      $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
+      $gameToDelete=$repository->find($id);
+      $em=$this->getDoctrine()->getManager();
+      if ($teamToDelete) {
+        $em->remove($teamToDelete);
+        $em->flush();
+        return new Response ("usunięto mecz o id = $id");
+      }
+      return new Response ("nie ma takiego meczu");
     }
 
     /**
      * @Route("/showTeamGames")
-     */
-    public function showTeamGamesAction()
-    {
-        return $this->render('AppBundle:Game:show_team_games.html.twig', array(
-            // ...
-        ));
-    }
 
-    /**
-     * @Route("/modifyGame")
      */
-    public function modifyGameAction()
+    public function showTeamGamesAction(Request $request)
     {
-        return $this->render('AppBundle:Game:modify_game.html.twig', array(
-            // ...
-        ));
+        $gametest = new Game();
+        $form=$this->createFormBuilder($gametest)->add('homeTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
+        ->add('awayTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
+        ->add('scoreHome', IntegerType::class, array('attr'=>array('min'=>0)))->add('scoreAway', IntegerType::class, array('attr'=>array('min'=>0)))->add('date', DateTimeType::class)
+        ->add('result', ChoiceType::class,(array('choices'=>array('home win' =>1, 'draw' => 0, 'away win'=>2),'choice_attr' => function($choiceValue, $key, $value) {
+        // adds a class like attending_yes, attending_no, etc
+        return ['class' => 'attending_'.strtolower($key)];
+    },)))
+        ->add('description', TextType::class, array('attr'=>array('maxlength'=>1990)))
+        ->add('save', SubmitType::class, array('attr' => array('class' => 'save'),))
+        ->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+          $gameTest=$form->getData();
+          $em=$this->getDoctrine()->getManager();
+          $em->persist($gameTest);
+          $em->flush();
+          return $this->redirectToRoute('addGame');
+        }
+        return $this->render('@App/Game/show_team_games.html.twig', array('form'=>$form->createView()));
+    }
+    /**
+     * @Route("/modifyGame/{id}")
+     *@Template("@App/Game/modify_game.html.twig")
+     */
+    public function modifyGameAction($id)
+    {
+      $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
+      $game=$repository->find($id);
+      if (!$game) {
+        return new Response ("nie ma meczu o id ".$id);
+      }
+      if (!empty(get)) {
+        # code...
+      }
+      return new Response ('wczytany mecz to '.$game->getHomeTeam()."- ".$game->getAwayTeam()." zakończony wynikiem ".$game->getScoreHome()." : ".$game->getScoreAway());
     }
 
 }

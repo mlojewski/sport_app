@@ -124,5 +124,8 @@ class team
     {
         return $this->logo;
     }
+    public function __toString()
+    {
+      return $this->name;
+    }
 }
-

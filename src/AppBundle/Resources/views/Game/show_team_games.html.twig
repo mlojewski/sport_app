@@ -1,7 +1,10 @@
-{% extends "::base.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block title %}AppBundle:Game:showTeamGames{% endblock %}
 
 {% block body %}
 <h1>Welcome to the Game:showTeamGames page</h1>
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
 {% endblock %}
