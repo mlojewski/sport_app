@@ -84,5 +84,33 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
         }
         return new Response ("nie ma takiej drużyny");
     }
+    /**
+     * @Route("/updateTeam/{id}")
+     *@Template("@App/team/update_team.html.twig")
+     */
+
+    public function updateTeamAction(Request $request, $id)
+    {
+      $teamToUpdate=$this->getDoctrine()->getRepository('AppBundle:team')->find($id);
+      $teamToUpdate->setName($teamToUpdate->getname());
+      $teamToUpdate->setPassword($teamToUpdate->getPassword());
+      $teamToUpdate->setLogo($teamToUpdate->getLogo());
+
+      $form=$this->createFormBuilder($teamToUpdate)->add('name', TextType::class)->add('password', PasswordType::class)
+      ->add('logo', TextType::class)->add('send', SubmitType::class, array('label' =>'Update Team'))->getForm();
+      $form->handleRequest($request);
+      if ($form->isSubmitted() && $form->isValid()) {
+        $name=$form['name']->getData();
+        $password=$form['password']->getData();
+        $logo=$form['logo']->getData();
+        $em=$this->getDoctrine()->getManager();
+        $teamToUpdate =$em->getRepository('AppBundle:team')->find($id); // celem wyszukania id drużyny do aktualizacji
+        $teamToUpdate->setName($name);
+        $teamToUpdate->setPassword($password);
+        $teamToUpdate->setLogo($logo);
+        $em->flush();
+      }
+      return $this->render('@App/team/update_team.html.twig', array('form'=>$form->createView(),));
+    }
 
 }

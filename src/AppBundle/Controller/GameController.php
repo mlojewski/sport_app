@@ -72,7 +72,7 @@ class GameController extends Controller
     }
 
     /**
-     * @Route("/showAllGames")
+     * @Route("/showAllGames", name="show_all_games")
      *@Template("@App/Game/show_all_games.html.twig")
      */
     public function showAllGamesAction()
@@ -111,7 +111,7 @@ class GameController extends Controller
         $homeGames = $repository->findByHomeTeam($name);
         $awayGames=$repository->findByAwayTeam($name);
         $allTeamGames=array_merge($homeGames, $awayGames);
-        
+
         return ['allTeamGames'=>$allTeamGames];
     }
     /**
@@ -120,30 +120,48 @@ class GameController extends Controller
      */
     public function modifyGameAction($id, Request $request)
     {
-      $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
-      $gameToUpdate=$repository->find($id);
+      $gameToUpdate=$this->getDoctrine()->getRepository('AppBundle:Game')->find($id);
       if (!$gameToUpdate) {
         return new Response ("nie ma meczu o id ".$id);
       }
+      $gameToUpdate->setHomeTeam($gameToUpdate->getHomeTeam());
+      $gameToUpdate->setAwayTeam($gameToUpdate->getAwayTeam());
+      $gameToUpdate->setScoreHome($gameToUpdate->getScoreHome());
+      $gameToUpdate->setScoreAway($gameToUpdate->getScoreAway());
+      $gameToUpdate->setResult($gameToUpdate->getResult());
+      $gameToUpdate->setDate($gameToUpdate->getDate());
+      $gameToUpdate->setDescription($gameToUpdate->getDescription());
       $form=$this->createFormBuilder($gameToUpdate)->add('homeTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
       ->add('awayTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
       ->add('scoreHome', IntegerType::class, array('attr'=>array('min'=>0)))->add('scoreAway', IntegerType::class, array('attr'=>array('min'=>0)))->add('date', DateTimeType::class)
       ->add('result', ChoiceType::class,(array('choices'=>array('home win' =>1, 'draw' => 0, 'away win'=>2),'choice_attr' => function($choiceValue, $key, $value) {
       return ['class' => 'attending_'.strtolower($key)];},)))
       ->add('description', TextType::class, array('attr'=>array('maxlength'=>1990)))
-      ->add('save', SubmitType::class, array('attr' => array('class' => 'save'),))
+      ->add('save', SubmitType::class, array('attr' => array('class' => 'update'),))
       ->getForm();
       $form->handleRequest($request);
       if ($form->isSubmitted() && $form->isValid()) {
 
-        $gameToUpdate=$form->getData();
-
+        $homeTeam=$form['homeTeam']->getData();
+        $awayTeam=$form['awayTeam']->getData();
+        $scoreHome=$form['scoreHome']->getData();
+        $scoreAway=$form['scoreAway']->getData();
+        $result=$form['result']->getData();
+        $date=$form['date']->getData();
+        $description=$form['description']->getData();
         $em=$this->getDoctrine()->getManager();
-        $em->persist($gameTest);
+        $gameToUpdate =$em->getRepository('AppBundle:Game')->find($id);
+        $gameToUpdate->setHomeTeam($homeTeam);
+        $gameToUpdate->setAwayTeam($awayTeam);
+        $gameToUpdate->setScoreHome($scoreHome);
+        $gameToUpdate->setScoreAway($scoreAway);
+        $gameToUpdate->setResult($result);
+        $gameToUpdate->setDate($date);
+        $gameToUpdate->setDescription($description);
         $em->flush();
-        return $this->redirectToRoute('addGame');
+        return $this->redirectToRoute('show_all_games');
       }
-      return new Response ('wczytany mecz to '.$gameToUpdate->getHomeTeam()."- ".$gameToUpdate->getAwayTeam()." zakończony wynikiem ".$gameToUpdate->getScoreHome()." : ".$gameToUpdate->getScoreAway());
+      return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(),));;
     }
 
 
