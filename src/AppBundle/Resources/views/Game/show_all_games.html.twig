@@ -1,7 +1,14 @@
-{% extends "::base.html.twig" %}
+{% extends "base.html.twig" %}
 
 {% block title %}AppBundle:Game:showAllGames{% endblock %}
 
 {% block body %}
 <h1>Welcome to the Game:showAllGames page</h1>
+{%for game in allGames%}
+Mecz nr: {{game.id}} {{game.homeTeam}} vs {{game.awayTeam}} <br>
+Wynik: {{game.scoreHome}} : {{game.scoreAway}} <br>
+Opis: {{game.description}}<br>
+-------------<br>
+{%endfor%}
+
 {% endblock %}

@@ -4,7 +4,13 @@
 
 {% block body %}
 <h1>Welcome to the Game:showTeamGames page</h1>
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+{%for game in allTeamGames%}
+Gospodarz: {{game.homeTeam}}<br>
+Gość: {{game.awayTeam}}<br>
+Wynik: {{game.scoreHome}} : {{game.scoreAway}}<br>
+
+Sprawozdanie z meczu {{game.description}}<br>
+<br>
+{%endfor%}
+<u>TODO - data nie chce się konwertować na string</u>
 {% endblock %}
