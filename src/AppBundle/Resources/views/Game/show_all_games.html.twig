@@ -4,11 +4,24 @@
 
 {% block body %}
 <h1>Welcome to the Game:showAllGames page</h1>
+<table>
+<tr>
+<th>Gospodarz</th>
+<th>Gość</th>
+<th>Wynik</th>
+<th>Data</th>
+<th>Opis</th>
+<th>Edycja<th>
+</tr>
 {%for game in allGames%}
-Mecz nr: {{game.id}} {{game.homeTeam}} vs {{game.awayTeam}} <br>
-Wynik: {{game.scoreHome}} : {{game.scoreAway}} <br>
-Opis: {{game.description}}<br>
--------------<br>
+<tr>
+<td>{{game.homeTeam}}</td>
+<td> {{game.awayTeam}}</td>
+<td> {{game.scoreHome}} : {{game.scoreAway}} </td>
+<td>blob</td>
+<td>{{game.description}}</td>
+<td><a href="/modifyGame/{{game.id}}">Edytuj</a></td>
+</tr>
 {%endfor%}
-
+</table>
 {% endblock %}

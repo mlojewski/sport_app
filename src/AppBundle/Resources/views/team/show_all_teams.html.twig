@@ -4,9 +4,18 @@
 
 {% block body %}
 <h1>Welcome to the team:showAllTeams page</h1>
+<table>
+<tr>
+<th> nazwa</th>
+<th>logo</th>
+<th>edytuj</th>
+</tr>
 {%for team in allTeams%}
-Nazwa: {{team.name}}<br>
-Logo: {{team.logo}}<br>
----------<br>
+<tr>
+<td>{{team.name}}</td>
+<td>{{team.logo}}</td>
+<td><a href= "/updateTeam/{{team.id}}">Edytuj {{team.name}}</a></td>
+</tr>
 {%endfor%}
+</table>
 {% endblock %}
