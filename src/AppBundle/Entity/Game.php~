@@ -262,45 +262,4 @@ class Game
     {
       return $this->name;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->teams = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add team
-     *
-     * @param \AppBundle\Entity\team $team
-     *
-     * @return Game
-     */
-    public function addTeam(\AppBundle\Entity\team $team)
-    {
-        $this->teams[] = $team;
-
-        return $this;
-    }
-
-    /**
-     * Remove team
-     *
-     * @param \AppBundle\Entity\team $team
-     */
-    public function removeTeam(\AppBundle\Entity\team $team)
-    {
-        $this->teams->removeElement($team);
-    }
-
-    /**
-     * Get teams
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getTeams()
-    {
-        return $this->teams;
-    }
 }
