@@ -9,13 +9,17 @@
 <th> nazwa</th>
 <th>logo</th>
 <th>edytuj</th>
+<th>lista gier</th>
 </tr>
 {%for team in allTeams%}
+
 <tr>
 <td>{{team.name}}</td>
 <td>{{team.logo}}</td>
-<td><a href= "/updateTeam/{{team.id}}">Edytuj {{team.name}}</a></td>
+<td><a href= "/updateTeam/{{team.id}}">Edytuj zespół</a></td>
+<td><a href= "/showTeamGames/{{team.name}}">gry</a></td>
 </tr>
+
 {%endfor%}
 </table>
 {% endblock %}

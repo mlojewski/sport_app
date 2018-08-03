@@ -43,6 +43,27 @@ class team
     private $logo;
 
     /**
+    * @var int
+    * @ORM\Column(name="points_for", type="integer")
+    */
+
+    private $pointsFor;
+
+    /**
+    * @var int
+    * @ORM\Column(name="scores_for", type="integer")
+    */
+
+    private $scoresFor;
+
+    /**
+    * @var int
+    * @ORM\Column(name="scores_against", type="integer")
+    */
+
+    private $scoresAgainst;
+
+    /**
     *@ORM\ManyToMany(targetEntity="Game", inversedBy="teams", cascade={"persist", "merge"})
     *@ORM\JoinTable(name="team_games",
       * joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
@@ -51,11 +72,6 @@ class team
     **/
 
     private $games;
-
-    // public function __construct()
-    // {
-    //   // $this->games=new\Doctrine\Common\Collections\ArrayCollection();
-    // }
 
 
 
@@ -143,5 +159,46 @@ class team
     public function __toString()
     {
       return $this->name;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->games = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add game
+     *
+     * @param \AppBundle\Entity\Game $game
+     *
+     * @return team
+     */
+    public function addGame(\AppBundle\Entity\Game $game)
+    {
+        $this->games[] = $game;
+
+        return $this;
+    }
+
+    /**
+     * Remove game
+     *
+     * @param \AppBundle\Entity\Game $game
+     */
+    public function removeGame(\AppBundle\Entity\Game $game)
+    {
+        $this->games->removeElement($game);
+    }
+
+    /**
+     * Get games
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGames()
+    {
+        return $this->games;
     }
 }

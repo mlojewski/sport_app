@@ -30,7 +30,7 @@ class GameController extends Controller
       $form=$this->createFormBuilder($gametest)->add('homeTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
       ->add('awayTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
       ->add('scoreHome', IntegerType::class, array('attr'=>array('min'=>0)))->add('scoreAway', IntegerType::class, array('attr'=>array('min'=>0)))->add('date', DateTimeType::class)
-      ->add('result', ChoiceType::class,(array('choices'=>array('home win' =>1, 'draw' => 0, 'away win'=>2),'choice_attr' => function($choiceValue, $key, $value) {
+      ->add('result', ChoiceType::class,(array('choices'=>array('not played' => null, 'home win' =>1, 'draw' => 0, 'away win'=>2),'choice_attr' => function($choiceValue, $key, $value) {
       // adds a class like attending_yes, attending_no, etc
       return ['class' => 'attending_'.strtolower($key)];
     },)))
@@ -45,7 +45,7 @@ class GameController extends Controller
         $em->flush();
         return $this->redirectToRoute('addGame');
       }
-      return $this->render('@App/Game/show_team_games.html.twig', array('form'=>$form->createView()));
+      return $this->render('@App/Game/create_game.html.twig', array('form'=>$form->createView()));
     }
 
     /**
@@ -100,20 +100,7 @@ class GameController extends Controller
       return new Response ("nie ma takiego meczu");
     }
 
-    /**
-     * @Route("/showTeamGames/{name}")
-     *@Template("@App/Game/show_team_games.html.twig")
-     */
-    public function showTeamGamesAction($name)
-    {
 
-        $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
-        $homeGames = $repository->findByHomeTeam($name);
-        $awayGames=$repository->findByAwayTeam($name);
-        $allTeamGames=array_merge($homeGames, $awayGames);
-
-        return ['allTeamGames'=>$allTeamGames];
-    }
     /**
      * @Route("/modifyGame/{id}")
      *@Template("@App/Game/modify_game.html.twig")
@@ -121,6 +108,10 @@ class GameController extends Controller
     public function modifyGameAction($id, Request $request)
     {
       $gameToUpdate=$this->getDoctrine()->getRepository('AppBundle:Game')->find($id);
+      $homeTeam=$this->getDoctrine()->getRepository('AppBundle:team')->findOneByName($gameToUpdate->getHomeTeam()); //samo findby zwraca tablicę a findoneby obiekt
+      $awayTeam=$this->getDoctrine()->getRepository('AppBundle:team')->findOneByName($gameToUpdate->getAwayTeam());
+      $pointsHT=$homeTeam->getPointsFor();
+      $pointsAT=$awayTeam->getPointsFor();
       if (!$gameToUpdate) {
         return new Response ("nie ma meczu o id ".$id);
       }
@@ -159,8 +150,11 @@ class GameController extends Controller
         $gameToUpdate->setDate($date);
         $gameToUpdate->setDescription($description);
         $em->flush();
+
         return $this->redirectToRoute('show_all_games');
       }
+      
+
       return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(),));;
     }
 

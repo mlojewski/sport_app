@@ -24,7 +24,10 @@ class teamController extends Controller
      */
     public function addTeamAction()
     {
-
+      $em=$this->getDoctrine()->getManager();
+      $query=$em->createQuery('SELECT team FROM AppBundle:team team ORDER BY team.id DESC');
+      $newTeam=$query->setMaxResults(1)->getOneOrNullResult();
+    return new Response ('utworzono drużynę o id '.$newTeam->getId());
     }
     /**
      * @Route("/createTeam")
@@ -39,6 +42,9 @@ public function createTeamAction(Request $request)
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
       $newTeam=$form->getData();
+      $newTeam->setPointsFor(0);
+      $newTeam->setScoresFor(0);
+      $newTeam->setScoresAgainst(0);
       $em=$this->getDoctrine()->getManager();
       $em->persist($newTeam);
       $em->flush();
@@ -66,6 +72,67 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
         $repository=$this->getDoctrine()->getRepository('AppBundle:team');
         $allTeams=$repository->findAll();
         return['allTeams'=>$allTeams];
+    }
+    /**
+     * @Route("/showTeamGames/{name}")
+     *@Template("@App/team/show_team_games.html.twig")
+     */
+    public function showTeamGamesAction($name)
+    {
+      $myScoresFor=[];
+      $myScoresAgainst=[];
+      $myPointsFor=[];
+        $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
+
+        $homeGames = $repository->findByHomeTeam($name);
+        $awayGames=$repository->findByAwayTeam($name);
+        $allTeamGames=array_merge($homeGames, $awayGames);
+
+        foreach ($allTeamGames as $key) {
+          if ($name==$key->getHomeTeam()) {
+            $gameScoresFor=$key->getScoreHome();
+            array_push($myScoresFor,$gameScoresFor);
+            $gameScoresAgainst=$key->getScoreAway();
+            array_push($myScoresAgainst,$gameScoresAgainst);
+          }elseif ($name==$key->getAwayTeam()) {
+            $gameScoresFor=$key->getScoreAway();
+            array_push($myScoresFor,$gameScoresFor);
+            $gameScoresAgainst=$key->getScoreHome();
+            array_push($myScoresAgainst,$gameScoresAgainst);
+          }
+          if ($key->getResult() == 0) {
+            array_push($myPointsFor, 1);
+          }elseif ($name==$key->getHomeTeam() && $key->getResult() == 1) {
+              array_push($myPointsFor, 3);
+          }elseif ($name==$key->getAwayTeam() && $key->getResult() == 2) {
+              array_push($myPointsFor, 3);
+        }
+      }
+      
+        $totalScoresFor=array_sum($myScoresFor);
+        $totalScoresAgainst=array_sum($myScoresAgainst);
+        $totalPointsFor=array_sum($myPointsFor);
+          $teamRepository=$this->getDoctrine()->getRepository('AppBundle:team');
+          $team=$teamRepository->findOneByName($name);
+          $team->setPointsFor($totalPointsFor);
+          $team->setScoresFor($totalScoresFor);
+          $team->setScoresAgainst($totalScoresAgainst);
+          $em=$this->getDoctrine()->getManager();
+          $em->flush();
+        return ['allTeamGames'=>$allTeamGames];
+
+    }
+    /**
+     * @Route("/showTable")
+     *@Template("@App/team/show_table.html.twig")
+     */
+    public function showTableAction()
+    {
+
+        $em=$this->getDoctrine()->getManager();
+        $query=$em->createQuery('SELECT team FROM AppBundle:team team ORDER BY team.pointsFor DESC');
+        $table=$query->getResult();
+        return ['allTeams'=>$table];
     }
 
     /**

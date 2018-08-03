@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+
 /**
  * User
  *
@@ -187,4 +188,3 @@ class User
         return $this->password;
     }
 }
-

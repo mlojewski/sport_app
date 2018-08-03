@@ -43,6 +43,27 @@ class team
     private $logo;
 
     /**
+    * @var int
+    * @ORM\Column(name="points_for", type="integer")
+    */
+
+    private $pointsFor;
+
+    /**
+    * @var int
+    * @ORM\Column(name="scores_for", type="integer")
+    */
+
+    private $scoresFor;
+
+    /**
+    * @var int
+    * @ORM\Column(name="scores_against", type="integer")
+    */
+
+    private $scoresAgainst;
+
+    /**
     *@ORM\ManyToMany(targetEntity="Game", inversedBy="teams", cascade={"persist", "merge"})
     *@ORM\JoinTable(name="team_games",
       * joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
@@ -51,11 +72,6 @@ class team
     **/
 
     private $games;
-
-    // public function __construct()
-    // {
-    //   // $this->games=new\Doctrine\Common\Collections\ArrayCollection();
-    // }
 
 
 
@@ -184,5 +200,77 @@ class team
     public function getGames()
     {
         return $this->games;
+    }
+
+    /**
+     * Set pointsFor
+     *
+     * @param integer $pointsFor
+     *
+     * @return team
+     */
+    public function setPointsFor($pointsFor)
+    {
+        $this->pointsFor = $pointsFor;
+
+        return $this;
+    }
+
+    /**
+     * Get pointsFor
+     *
+     * @return integer
+     */
+    public function getPointsFor()
+    {
+        return $this->pointsFor;
+    }
+
+    /**
+     * Set scoresFor
+     *
+     * @param integer $scoresFor
+     *
+     * @return team
+     */
+    public function setScoresFor($scoresFor)
+    {
+        $this->scoresFor = $scoresFor;
+
+        return $this;
+    }
+
+    /**
+     * Get scoresFor
+     *
+     * @return integer
+     */
+    public function getScoresFor()
+    {
+        return $this->scoresFor;
+    }
+
+    /**
+     * Set scoresAgainst
+     *
+     * @param integer $scoresAgainst
+     *
+     * @return team
+     */
+    public function setScoresAgainst($scoresAgainst)
+    {
+        $this->scoresAgainst = $scoresAgainst;
+
+        return $this;
+    }
+
+    /**
+     * Get scoresAgainst
+     *
+     * @return integer
+     */
+    public function getScoresAgainst()
+    {
+        return $this->scoresAgainst;
     }
 }

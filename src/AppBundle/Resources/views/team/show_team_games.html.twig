@@ -5,12 +5,23 @@
 {% block body %}
 <h1>Welcome to the Game:showTeamGames page</h1>
 {%for game in allTeamGames%}
+{% if game.result is not null %}
 Gospodarz: {{game.homeTeam}}<br>
 Gość: {{game.awayTeam}}<br>
 Wynik: {{game.scoreHome}} : {{game.scoreAway}}<br>
 
 Sprawozdanie z meczu {{game.description}}<br>
 <br>
+{%else%}
+
+<i>mecz nierozegrany:</i><br>
+Gospodarz: {{game.homeTeam}}<br>
+Gość: {{game.awayTeam}}<br>
+Wynik: {{game.scoreHome}} : {{game.scoreAway}}<br>
+
+Sprawozdanie z meczu {{game.description}}<br>
+<br>
+{%endif%}
 {%endfor%}
 <u>TODO - data nie chce się konwertować na string</u>
 {% endblock %}

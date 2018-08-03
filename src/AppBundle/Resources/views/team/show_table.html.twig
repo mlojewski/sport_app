@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+
+{% block title %}AppBundle:team:showTable{% endblock %}
+
+{% block body %}
+<h1>Welcome to the team:showTable page</h1>
+<table>
+<tr align = "center">
+<th> nazwa</th>
+<th>logo</th>
+<th>Punkty</th>
+<th>bramki zdobyte</th>
+<th>Bramki stracone</th>
+
+</tr>
+{%for team in allTeams%}
+<tr align = "center">
+<td>{{team.name}}</td>
+<td>{{team.logo}}</td>
+<td>{{team.pointsFor}}</td>
+<td>{{team.scoresFor}}</td>
+<td>{{team.scoresAgainst}}</td>
+
+</tr>
+{%endfor%}
+</table>
+{% endblock %}
