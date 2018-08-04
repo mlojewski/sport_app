@@ -43,6 +43,7 @@ class GameController extends Controller
         $em=$this->getDoctrine()->getManager();
         $em->persist($gameTest);
         $em->flush();
+
         return $this->redirectToRoute('addGame');
       }
       return $this->render('@App/Game/create_game.html.twig', array('form'=>$form->createView()));
@@ -108,10 +109,10 @@ class GameController extends Controller
     public function modifyGameAction($id, Request $request)
     {
       $gameToUpdate=$this->getDoctrine()->getRepository('AppBundle:Game')->find($id);
+
       $homeTeam=$this->getDoctrine()->getRepository('AppBundle:team')->findOneByName($gameToUpdate->getHomeTeam()); //samo findby zwraca tablicę a findoneby obiekt
       $awayTeam=$this->getDoctrine()->getRepository('AppBundle:team')->findOneByName($gameToUpdate->getAwayTeam());
-      $pointsHT=$homeTeam->getPointsFor();
-      $pointsAT=$awayTeam->getPointsFor();
+
       if (!$gameToUpdate) {
         return new Response ("nie ma meczu o id ".$id);
       }
@@ -122,8 +123,7 @@ class GameController extends Controller
       $gameToUpdate->setResult($gameToUpdate->getResult());
       $gameToUpdate->setDate($gameToUpdate->getDate());
       $gameToUpdate->setDescription($gameToUpdate->getDescription());
-      $form=$this->createFormBuilder($gameToUpdate)->add('homeTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
-      ->add('awayTeam', EntityType::class, array('class'=>'AppBundle:team', 'choice_label'=>'name'))
+      $form=$this->createFormBuilder($gameToUpdate)
       ->add('scoreHome', IntegerType::class, array('attr'=>array('min'=>0)))->add('scoreAway', IntegerType::class, array('attr'=>array('min'=>0)))->add('date', DateTimeType::class)
       ->add('result', ChoiceType::class,(array('choices'=>array('home win' =>1, 'draw' => 0, 'away win'=>2),'choice_attr' => function($choiceValue, $key, $value) {
       return ['class' => 'attending_'.strtolower($key)];},)))
@@ -133,8 +133,7 @@ class GameController extends Controller
       $form->handleRequest($request);
       if ($form->isSubmitted() && $form->isValid()) {
 
-        $homeTeam=$form['homeTeam']->getData();
-        $awayTeam=$form['awayTeam']->getData();
+
         $scoreHome=$form['scoreHome']->getData();
         $scoreAway=$form['scoreAway']->getData();
         $result=$form['result']->getData();
@@ -153,9 +152,9 @@ class GameController extends Controller
 
         return $this->redirectToRoute('show_all_games');
       }
-      
 
-      return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(),));;
+
+      return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(), 'game'=>$gameToUpdate));;
     }
 
 
