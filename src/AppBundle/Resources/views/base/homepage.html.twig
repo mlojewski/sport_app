@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+{% block title %}Homepage{% endblock %}
+{% block body %}
+
+   {% if not is_granted('ROLE_USER') %} <a href="{{ path('fos_user_security_login') }}">zaloguj się</a><br>
+    <a href="{{ path('fos_user_registration_register') }}">zarejestruj się</a><br>{% endif %}
+    <a href="{{ path('show_all_games') }}">zobacz wszystkie mecze</a><br>
+    <a href="{{ path('app_team_showtable') }}">zobacz tabelę</a><br>
+    <a href="{{ path('app_team_showallteams') }}">zobacz listę drużyn</a><br>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('app_game_creategame') }}">dodaj mecz</a><br>
+     <a href="{{ path('app_team_createteam') }}">dodaj zespół</a><br>
+    {% endif %}
+
+{% endblock %}

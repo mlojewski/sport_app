@@ -6,8 +6,20 @@
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
-    <body>
+    <div class="main-content">
+        {% for msg in app.session.flashBag.get('success') %}
+            <div class="alert alert-success">
+                {{ msg }}
+            </div>
+        {% endfor %}
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+    </div>
+    <div class="footer">
+        <p class="footer-text">Made with <span class="heart"><3</span> <a href="https://knpuniversity.com">KnpUniversity</a></p>
+    </div>
+    {% block javascripts %}
+        <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="{{ asset('js/main.js') }}"></script>
+    {% endblock %}
     </body>
 </html>

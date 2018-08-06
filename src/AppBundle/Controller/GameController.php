@@ -2,14 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AppBundle\Entity\Game;
-use AppBundle\Entity\team;
-use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -22,7 +20,8 @@ class GameController extends Controller
 {
     /**
      * @Route("/createGame")
-     *@Template("@App/Game/create_game.html.twig")
+     * @Template("@App/Game/create_game.html.twig")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function createGameAction(Request $request)
     {
@@ -58,7 +57,7 @@ class GameController extends Controller
       $em=$this->getDoctrine()->getManager();
       $query=$em->createQuery('SELECT game FROM AppBundle:Game game ORDER BY game.id DESC');
       $newGame=$query->setMaxResults(1)->getOneOrNullResult();
-    return new Response ('utworzono mecz o id '.$newGame->getId());
+    return new Response ('<a href="/">wróć do głównej</a><br>utworzono mecz o id '.$newGame->getId());
     }
 
     /**
@@ -87,24 +86,26 @@ class GameController extends Controller
     /**
      * @Route("/deleteGame/{id}")
      *@Template("@App/Game/delete_game.html.twig")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteGameAction($id)
     {
       $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
       $gameToDelete=$repository->find($id);
       $em=$this->getDoctrine()->getManager();
-      if ($teamToDelete) {
-        $em->remove($teamToDelete);
+      if ($gameToDelete) {
+        $em->remove($gameToDelete);
         $em->flush();
-        return new Response ("usunięto mecz o id = $id");
+        return new Response ('<a href="/">wróć do głównej</a><br>usunięto mecz o id = $id');
       }
-      return new Response ("nie ma takiego meczu");
+      return new Response ('<a href="/">wróć do głównej</a><br>nie ma takiego meczu');
     }
 
 
     /**
      * @Route("/modifyGame/{id}")
      *@Template("@App/Game/modify_game.html.twig")
+     *@Security("is_granted('ROLE_ADMIN')")
      */
     public function modifyGameAction($id, Request $request)
     {
@@ -154,7 +155,7 @@ class GameController extends Controller
       }
 
 
-      return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(), 'game'=>$gameToUpdate));;
+      return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(), 'game'=>$gameToUpdate));
     }
 
 

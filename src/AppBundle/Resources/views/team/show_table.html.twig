@@ -4,8 +4,8 @@
 
 {% block body %}
 <h1>Welcome to the team:showTable page</h1>
-<table>
-<tr align = "center">
+<table border="2" align = "center">
+<tr>
 <th> nazwa</th>
 <th>logo</th>
 <th>Punkty</th>
@@ -24,4 +24,6 @@
 </tr>
 {%endfor%}
 </table>
+    <br>
+    <a href ="{{ path('homepage') }}">wróć do głównej</a>
 {% endblock %}

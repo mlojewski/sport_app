@@ -4,24 +4,25 @@
 
 {% block body %}
 <h1>Welcome to the Game:showAllGames page</h1>
-<table>
+<table border="2" align="center">
 <tr>
 <th>Gospodarz</th>
 <th>Gość</th>
 <th>Wynik</th>
 <th>Data</th>
 <th>Opis</th>
-<th>Edycja<th>
+    {%  if is_granted('ROLE_ADMIN') %}<th>edytuj</th><th>usuń</th>{% endif %}
 </tr>
 {%for game in allGames%}
-<tr>
+<tr align="center">
 <td>{{game.homeTeam}}</td>
 <td> {{game.awayTeam}}</td>
 <td> {{game.scoreHome}} : {{game.scoreAway}} </td>
-<td>blob</td>
+<td>{{ game.date|date('H:i d-m-Y') }}</td>
 <td>{{game.description}}</td>
-<td><a href="/modifyGame/{{game.id}}">Edytuj</a></td>
+    {%  if is_granted('ROLE_ADMIN') %}<td><a href="/modifyGame/{{game.id}}">Edytuj</a></td><td><a href="/deleteGame/{{game.id}}">usuń</a></td>{% endif %}
 </tr>
 {%endfor%}
 </table>
+    <a href ="{{ path('homepage') }}">wróć do głównej</a>
 {% endblock %}

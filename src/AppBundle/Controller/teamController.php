@@ -3,16 +3,13 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use AppBundle\Entity\game;
 use AppBundle\Entity\team;
-use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
@@ -27,11 +24,12 @@ class teamController extends Controller
       $em=$this->getDoctrine()->getManager();
       $query=$em->createQuery('SELECT team FROM AppBundle:team team ORDER BY team.id DESC');
       $newTeam=$query->setMaxResults(1)->getOneOrNullResult();
-    return new Response ('utworzono drużynę o id '.$newTeam->getId());
+    return new Response ('<a href="/">wróć do głównej</a><br>utworzono drużynę o id '.$newTeam->getId());
     }
     /**
      * @Route("/createTeam")
      *@Template("@App/team/create_team.html.twig")
+    * @Security("is_granted('ROLE_ADMIN')")
      */
 
 public function createTeamAction(Request $request)
@@ -60,7 +58,7 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
     {
     $repository=$this->getDoctrine()->getRepository('AppBundle:team');
     $team=$repository->find($id);
-    return new Response('wczytana drużyna to '.$team->getName());
+    return new Response('<a href="/">wróć do głównej</a><br>wczytana drużyna to '.$team->getName());
     }
 
     /**
@@ -124,7 +122,6 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
     }
     /**
      * @Route("/showTable")
-     *@Template("@App/team/show_table.html.twig")
      */
     public function showTableAction()
     {
@@ -132,12 +129,13 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
         $em=$this->getDoctrine()->getManager();
         $query=$em->createQuery('SELECT team FROM AppBundle:team team ORDER BY team.pointsFor DESC');
         $table=$query->getResult();
-        return ['allTeams'=>$table];
+        return  $this->render('@App/team/show_table.html.twig', array('allTeams'=>$table));
     }
 
     /**
      * @Route("/deleteTeam/{id}")
      *@Template("@App/team/delete_team.html.twig")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteTeamAction($id)
     {
@@ -154,6 +152,7 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
     /**
      * @Route("/updateTeam/{id}")
      *@Template("@App/team/update_team.html.twig")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
 
     public function updateTeamAction(Request $request, $id)
