@@ -18,6 +18,7 @@ Flexbox Layout
 
 .main-content {
     min-height: 300px;
+    margin: 100px
 }
 
 .sea-creature-container {

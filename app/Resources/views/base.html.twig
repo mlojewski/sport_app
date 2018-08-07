@@ -15,9 +15,9 @@
 
         <header class="header">
 
-            <h1 class="logo">SportApp</h1>
+            <h1>SportApp</h1>
             <ul class="navi">
-                <li class="search"><a href="#" class="js-header-search-toggle"><i class="fa fa-search"></i></a></li>
+
                 <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
                 {%if is_granted('ROLE_USER')%}
                   <li><a href="{{ path('fos_user_security_logout')}}">Wyloguj</a></li>

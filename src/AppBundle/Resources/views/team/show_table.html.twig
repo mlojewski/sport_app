@@ -6,8 +6,9 @@
 <h1>Welcome to the team:showTable page</h1>
 <table border="2" align = "center">
 <tr>
+    <th></th>
 <th> nazwa</th>
-<th>logo</th>
+
 <th>Punkty</th>
 <th>bramki zdobyte</th>
 <th>Bramki stracone</th>
@@ -15,8 +16,9 @@
 </tr>
 {%for team in allTeams%}
 <tr align = "center">
+    <td><img height="30" src="{{ team.logo }}"></td>
 <td>{{team.name}}</td>
-<td>{{team.logo}}</td>
+
 <td>{{team.pointsFor}}</td>
 <td>{{team.scoresFor}}</td>
 <td>{{team.scoresAgainst}}</td>

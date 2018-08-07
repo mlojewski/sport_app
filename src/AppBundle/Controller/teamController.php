@@ -58,7 +58,9 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
     {
     $repository=$this->getDoctrine()->getRepository('AppBundle:team');
     $team=$repository->find($id);
-    return new Response('<a href="/">wróć do głównej</a><br>wczytana drużyna to '.$team->getName());
+
+    return ['team'=>$team];
+//        new Response('<a href="/">wróć do głównej</a><br>wczytana drużyna to '.$team->getName());
     }
 
     /**

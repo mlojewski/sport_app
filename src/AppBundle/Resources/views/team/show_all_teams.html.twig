@@ -16,13 +16,14 @@
 
 <tr align="center">
 <td>{{team.name}}</td>
-<td>{{team.logo}}</td>
+<td><img src="{{ team.logo }}"> </td>
     <td><a href= "/showTeam/{{team.id}}">Pokaż</a></td>
 <td><a href= "/showTeamGames/{{team.name}}">gry</a></td>
     {%  if is_granted('ROLE_ADMIN') %}  <td><a href= "/updateTeam/{{team.id}}">Edytuj zespół</a></td>{% endif %}
 </tr>
 
 {%endfor%}
+
 </table>
     <a href ="{{ path('homepage') }}">wróć do głównej</a>
 {% endblock %}

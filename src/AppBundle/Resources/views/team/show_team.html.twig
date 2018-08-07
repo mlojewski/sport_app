@@ -3,5 +3,8 @@
 {% block title %}AppBundle:team:showTeam{% endblock %}
 
 {% block body %}
-<h1>Welcome to the team:showTeam page</h1>
+<h1>strona drużyny {{team.name}}</h1>
+
+    <img src="{{ team.logo }}"><br>
+    <a href ="{{ path('homepage') }}">wróć do głównej</a>
 {% endblock %}
