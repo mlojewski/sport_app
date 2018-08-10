@@ -63,15 +63,6 @@ class team
 
     private $scoresAgainst;
 
-    /**
-    *@ORM\ManyToMany(targetEntity="Game", inversedBy="teams", cascade={"persist", "merge"})
-    *@ORM\JoinTable(name="team_games",
-      * joinColumns={@ORM\JoinColumn(name="team_id", referencedColumnName="id")},
-      * inverseJoinColumns={@ORM\JoinColumn(name="game_id", referencedColumnName="id")}
-      *)
-    **/
-
-    private $games;
 
 
 
@@ -165,42 +156,11 @@ class team
      */
     public function __construct()
     {
-        $this->games = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->games = new ArrayCollection();
     }
 
-    /**
-     * Add game
-     *
-     * @param \AppBundle\Entity\Game $game
-     *
-     * @return team
-     */
-    public function addGame(\AppBundle\Entity\Game $game)
-    {
-        $this->games[] = $game;
 
-        return $this;
-    }
 
-    /**
-     * Remove game
-     *
-     * @param \AppBundle\Entity\Game $game
-     */
-    public function removeGame(\AppBundle\Entity\Game $game)
-    {
-        $this->games->removeElement($game);
-    }
-
-    /**
-     * Get games
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getGames()
-    {
-        return $this->games;
-    }
 
     /**
      * Set pointsFor

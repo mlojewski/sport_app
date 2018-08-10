@@ -37,9 +37,15 @@ class GameController extends Controller
       ->add('save', SubmitType::class, array('attr' => array('class' => 'save'),))
       ->getForm();
       $form->handleRequest($request);
+
       if ($form->isSubmitted() && $form->isValid()) {
         $gameTest=$form->getData();
+        var_dump($gameTest);
         $em=$this->getDoctrine()->getManager();
+        $homeTeam = $gameTest->getHomeTeam();
+        $awayTeam=$gameTest->getAwayTeam();
+        $gameTest->addTeamGames($homeTeam);
+          $gameTest->addTeamGames($awayTeam);
         $em->persist($gameTest);
         $em->flush();
 
@@ -57,6 +63,7 @@ class GameController extends Controller
       $em=$this->getDoctrine()->getManager();
       $query=$em->createQuery('SELECT game FROM AppBundle:Game game ORDER BY game.id DESC');
       $newGame=$query->setMaxResults(1)->getOneOrNullResult();
+
     return new Response ('<a href="/">wróć do głównej</a><br>utworzono mecz o id '.$newGame->getId());
     }
 
@@ -96,7 +103,7 @@ class GameController extends Controller
       if ($gameToDelete) {
         $em->remove($gameToDelete);
         $em->flush();
-        return new Response ('<a href="/">wróć do głównej</a><br>usunięto mecz o id = $id');
+        return new Response ('<a href="/">wróć do głównej</a><br>usunięto mecz o id = '.$id);
       }
       return new Response ('<a href="/">wróć do głównej</a><br>nie ma takiego meczu');
     }

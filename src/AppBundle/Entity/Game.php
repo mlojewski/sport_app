@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -71,15 +72,16 @@ class Game
     private $description;
 
     /**
-    *@ORM\ManyToMany(targetEntity="team", inversedBy="games", cascade={"persist", "merge"})
-    */
+     * @ORM\ManyToMany(targetEntity="team")
+     * @ORM\JoinColumn(name="team_games")
+     */
 
-    private $teams;
+    private $teamGames;
 
-    // public function __construct()
-    // {
-    //   // $this->teams=new \Doctrine\Common\Collections\ArrayCollection();
-    // }
+    public function __construct()
+    {
+        $this->teamGames=new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -258,49 +260,27 @@ class Game
     {
         return $this->description;
     }
+
     public function __toString()
     {
       return $this->name;
     }
+
     /**
-     * Constructor
+     * @return mixed
      */
-    public function __construct()
+    public function addTeamGames(team $team)
     {
-        $this->teams = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->teamGames[] = $team;
     }
 
     /**
-     * Add team
-     *
-     * @param \AppBundle\Entity\team $team
-     *
-     * @return Game
+     * @return ArrayCollection|team[]
      */
-    public function addTeam(\AppBundle\Entity\team $team)
+    public function getTeamGames()
     {
-        $this->teams[] = $team;
-
-        return $this;
+        return $this->teamGames;
     }
 
-    /**
-     * Remove team
-     *
-     * @param \AppBundle\Entity\team $team
-     */
-    public function removeTeam(\AppBundle\Entity\team $team)
-    {
-        $this->teams->removeElement($team);
-    }
 
-    /**
-     * Get teams
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getTeams()
-    {
-        return $this->teams;
-    }
 }

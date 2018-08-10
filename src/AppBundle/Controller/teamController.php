@@ -43,6 +43,7 @@ public function createTeamAction(Request $request)
       $newTeam->setPointsFor(0);
       $newTeam->setScoresFor(0);
       $newTeam->setScoresAgainst(0);
+
       $em=$this->getDoctrine()->getManager();
       $em->persist($newTeam);
       $em->flush();
@@ -108,7 +109,7 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
               array_push($myPointsFor, 3);
         }
       }
-      
+
         $totalScoresFor=array_sum($myScoresFor);
         $totalScoresAgainst=array_sum($myScoresAgainst);
         $totalPointsFor=array_sum($myPointsFor);
