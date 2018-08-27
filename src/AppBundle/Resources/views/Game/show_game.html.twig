@@ -3,5 +3,13 @@
 {% block title %}AppBundle:Game:showGame{% endblock %}
 
 {% block body %}
-<h1>Welcome to the Game:showGame page</h1>
+<h1>{{ game.homeTeam }} : {{ game.awayTeam }}</h1>
+    wczytany mecz ma id: {{ game.id }} rozegrały go {{ game.homeTeam }} i {{ game.awayTeam }}<br>
+    odbył się w dniu {{ game.date|date('d-m-Y H:i') }} i zakończył się wynikiem {{ game.scoreHome }} : {{ game.scoreAway }};<br>
+    Opis meczu:<br>
+    {{ game.description }}<br>
+    <br>
+    <a href ="{{ path('homepage') }}">wróć do głównej</a>
+
+
 {% endblock %}

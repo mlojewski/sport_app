@@ -18,7 +18,7 @@
 <td>{{game.homeTeam}}</td>
 <td> {{game.awayTeam}}</td>
 <td> {{game.scoreHome}} : {{game.scoreAway}} </td>
-<td>{{ game.date|date('H:i d-m-Y') }}</td>
+<td>{{game.date|date('H:i d-m-Y') }}</td>
 <td>{{game.description}}</td>
     {%  if is_granted('ROLE_ADMIN') %}<td><a href="/modifyGame/{{game.id}}">Edytuj</a></td><td><a href="/deleteGame/{{game.id}}">usuń</a></td>{% endif %}
 </tr>

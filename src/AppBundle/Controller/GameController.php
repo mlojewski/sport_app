@@ -20,7 +20,6 @@ class GameController extends Controller
 {
     /**
      * @Route("/createGame")
-     * @Template("@App/Game/create_game.html.twig")
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function createGameAction(Request $request)
@@ -40,7 +39,7 @@ class GameController extends Controller
 
       if ($form->isSubmitted() && $form->isValid()) {
         $gameTest=$form->getData();
-        var_dump($gameTest);
+
         $em=$this->getDoctrine()->getManager();
         $homeTeam = $gameTest->getHomeTeam();
         $awayTeam=$gameTest->getAwayTeam();
@@ -56,26 +55,23 @@ class GameController extends Controller
 
     /**
      * @Route("/addGame", name="addGame")
-        *@Template("@App/Game/add_game.html.twig")
      */
     public function addGameAction()
     {
       $em=$this->getDoctrine()->getManager();
       $query=$em->createQuery('SELECT game FROM AppBundle:Game game ORDER BY game.id DESC');
       $newGame=$query->setMaxResults(1)->getOneOrNullResult();
-
-    return new Response ('<a href="/">wróć do głównej</a><br>utworzono mecz o id '.$newGame->getId());
+    return $this->render('@App/Game/add_game.html.twig', array('newGame'=>$newGame));
     }
 
     /**
      * @Route("/showGame/{id}")
-     *@Template("@App/Game/show_game.html.twig")
      */
     public function showGameAction($id)
     {
         $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
         $game=$repository->find($id);
-        return new Response ('wczytany mecz to '.$game->getHomeTeam()." - ".$game->getAwayTeam()." zakończony wynikiem ".$game->getScoreHome()." : ".$game->getScoreAway());
+        return $this->render('@App/Game/show_game.html.twig', array('game'=>$game));
     }
 
     /**
@@ -92,18 +88,34 @@ class GameController extends Controller
 
     /**
      * @Route("/deleteGame/{id}")
-     *@Template("@App/Game/delete_game.html.twig")
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteGameAction($id)
     {
       $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
       $gameToDelete=$repository->find($id);
+        $homeTeam=$this->getDoctrine()->getRepository('AppBundle:team')->findOneByName($gameToDelete->getHomeTeam()); //samo findby zwraca tablicę a findoneby obiekt
+        $awayTeam=$this->getDoctrine()->getRepository('AppBundle:team')->findOneByName($gameToDelete->getAwayTeam());
       $em=$this->getDoctrine()->getManager();
+      $homeScore=$gameToDelete->getScoreHome();
+      $awayScore=$gameToDelete->getScoreAway();
+
       if ($gameToDelete) {
+          if ($gameToDelete->getResult()==1){
+              $homeTeam->setPointsFor($homeTeam->getPointsFor() - 3);
+          }elseif ($gameToDelete->getResult() == 0){
+              $homeTeam->setPointsFor($homeTeam->getPointsFor()-1);
+              $awayTeam->setPointsFor($awayTeam->getPointsFor()-1);
+          }elseif($gameToDelete->getResult()== 2){
+              $awayTeam->setPointsFor($awayTeam->getPointsFor() - 3);
+          }
+          $homeTeam->setScoresFor($homeTeam->getScoresFor()-$homeScore);
+          $homeTeam->setScoresAgainst($homeTeam->getScoresAgainst() - $awayScore);
+          $awayTeam->setScoresFor($awayTeam->getScoresFor()-$awayScore);
+          $awayTeam->setScoresAgainst($awayTeam->getScoresAgainst() - $homeScore);
         $em->remove($gameToDelete);
         $em->flush();
-        return new Response ('<a href="/">wróć do głównej</a><br>usunięto mecz o id = '.$id);
+        return $this->render('@App/Game/delete_game.html.twig', array('gameToDelete'=>$gameToDelete));
       }
       return new Response ('<a href="/">wróć do głównej</a><br>nie ma takiego meczu');
     }
@@ -111,7 +123,6 @@ class GameController extends Controller
 
     /**
      * @Route("/modifyGame/{id}")
-     *@Template("@App/Game/modify_game.html.twig")
      *@Security("is_granted('ROLE_ADMIN')")
      */
     public function modifyGameAction($id, Request $request)
@@ -126,9 +137,12 @@ class GameController extends Controller
       }
       $gameToUpdate->setHomeTeam($gameToUpdate->getHomeTeam());
       $gameToUpdate->setAwayTeam($gameToUpdate->getAwayTeam());
-      $gameToUpdate->setScoreHome($gameToUpdate->getScoreHome());
-      $gameToUpdate->setScoreAway($gameToUpdate->getScoreAway());
-      $gameToUpdate->setResult($gameToUpdate->getResult());
+      $baseScoreHome=$gameToUpdate->getScoreHome();
+      $gameToUpdate->setScoreHome($baseScoreHome);
+      $baseScoreAway=$gameToUpdate->getScoreAway();
+      $gameToUpdate->setScoreAway($baseScoreAway);
+      $baseResult=$gameToUpdate->getResult();
+      $gameToUpdate->setResult($baseResult);
       $gameToUpdate->setDate($gameToUpdate->getDate());
       $gameToUpdate->setDescription($gameToUpdate->getDescription());
       $form=$this->createFormBuilder($gameToUpdate)
@@ -139,6 +153,7 @@ class GameController extends Controller
       ->add('save', SubmitType::class, array('attr' => array('class' => 'update'),))
       ->getForm();
       $form->handleRequest($request);
+
       if ($form->isSubmitted() && $form->isValid()) {
 
 
@@ -156,11 +171,29 @@ class GameController extends Controller
         $gameToUpdate->setResult($result);
         $gameToUpdate->setDate($date);
         $gameToUpdate->setDescription($description);
-        $em->flush();
 
+        if ($baseResult != $result) {
+            if ($result == 1) {
+                $homeTeam->setPointsFor($homeTeam->getPointsFor() + 3);
+            } elseif ($result == 0) {
+                $homeTeam->setPointsFor($homeTeam->getPointsFor() + 1);
+                $awayTeam->setPointsFor($awayTeam->getPointsFor() + 1);
+            } elseif ($result == 2) {
+                $awayTeam->setPointsFor($awayTeam->getPointsFor() + 3);
+            }
+        }
+        if ($baseScoreHome != $scoreHome){
+            $homeTeam->setScoresFor($homeTeam->getScoresFor() + $scoreHome - $baseScoreHome);
+            $homeTeam->setScoresAgainst($homeTeam->getScoresAgainst() + $scoreAway - $baseScoreAway);
+        }
+          if ($baseScoreAway != $scoreAway){
+              $awayTeam->setScoresFor($awayTeam->getScoresFor() + $scoreAway - $baseScoreAway);
+              $awayTeam->setScoresAgainst($awayTeam->getScoresAgainst() + $scoreHome - $baseScoreHome);
+          }
+
+        $em->flush();
         return $this->redirectToRoute('show_all_games');
       }
-
 
       return $this->render('@App/Game/modify_game.html.twig', array('form'=>$form->createView(), 'game'=>$gameToUpdate));
     }
