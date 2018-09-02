@@ -153,7 +153,7 @@ class GameController extends Controller
       ->add('save', SubmitType::class, array('attr' => array('class' => 'update'),))
       ->getForm();
       $form->handleRequest($request);
-
+var_dump($baseScoreAway);
       if ($form->isSubmitted() && $form->isValid()) {
 
 
@@ -173,6 +173,14 @@ class GameController extends Controller
         $gameToUpdate->setDescription($description);
 
         if ($baseResult != $result) {
+            if ($baseResult == 1) {
+                $homeTeam->setPointsFor($homeTeam->getPointsFor() - 3);
+            } elseif ($baseResult == 0 ) {
+                $homeTeam->setPointsFor($homeTeam->getPointsFor() - 1);
+                $awayTeam->setPointsFor($awayTeam->getPointsFor() - 1);
+            } elseif ($baseResult == 2) {
+                $awayTeam->setPointsFor($awayTeam->getPointsFor() - 3);
+            }
             if ($result == 1) {
                 $homeTeam->setPointsFor($homeTeam->getPointsFor() + 3);
             } elseif ($result == 0) {
@@ -181,16 +189,26 @@ class GameController extends Controller
             } elseif ($result == 2) {
                 $awayTeam->setPointsFor($awayTeam->getPointsFor() + 3);
             }
+
         }
         if ($baseScoreHome != $scoreHome){
-            $homeTeam->setScoresFor($homeTeam->getScoresFor() + $scoreHome - $baseScoreHome);
-            $homeTeam->setScoresAgainst($homeTeam->getScoresAgainst() + $scoreAway - $baseScoreAway);
+            $homeTeam->setScoresFor($homeTeam->getScoresFor() - $baseScoreHome + $scoreHome );
+//            $homeTeam->setScoresAgainst($homeTeam->getScoresAgainst() - $baseScoreAway + $scoreAway);
+//            $awayTeam->setScoresFor($awayTeam->getScoresFor() - $baseScoreAway + $scoreAway);
+            $awayTeam->setScoresAgainst($awayTeam->getScoresAgainst() - $baseScoreHome + $scoreHome);
+        }else{
+            $homeTeam->setScoresFor($homeTeam->getScoresFor());
+            $homeTeam->setScoresAgainst($homeTeam->getScoresAgainst());
         }
           if ($baseScoreAway != $scoreAway){
-              $awayTeam->setScoresFor($awayTeam->getScoresFor() + $scoreAway - $baseScoreAway);
-              $awayTeam->setScoresAgainst($awayTeam->getScoresAgainst() + $scoreHome - $baseScoreHome);
+              $awayTeam->setScoresFor($awayTeam->getScoresFor() - $baseScoreAway + $scoreAway);
+//              $awayTeam->setScoresAgainst($awayTeam->getScoresAgainst() - $baseScoreHome + $scoreHome);
+//              $homeTeam->setScoresFor($homeTeam->getScoresFor() - $baseScoreHome + $scoreHome );
+              $homeTeam->setScoresAgainst($homeTeam->getScoresAgainst() - $baseScoreAway + $scoreAway);
+          }else{
+              $awayTeam->setScoresFor($awayTeam->getScoresFor());
+              $awayTeam->setScoresAgainst($awayTeam->getScoresAgainst());
           }
-
         $em->flush();
         return $this->redirectToRoute('show_all_games');
       }

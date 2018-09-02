@@ -78,46 +78,13 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
      */
     public function showTeamGamesAction($name)
     {
-      $myScoresFor=[];
-      $myScoresAgainst=[];
-      $myPointsFor=[];
+
         $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
 
         $homeGames = $repository->findByHomeTeam($name);
         $awayGames=$repository->findByAwayTeam($name);
         $allTeamGames=array_merge($homeGames, $awayGames);
 
-//        foreach ($allTeamGames as $key) {
-//          if ($name==$key->getHomeTeam()) {
-//            $gameScoresFor=$key->getScoreHome();
-//            array_push($myScoresFor,$gameScoresFor);
-//            $gameScoresAgainst=$key->getScoreAway();
-//            array_push($myScoresAgainst,$gameScoresAgainst);
-//          }elseif ($name==$key->getAwayTeam()) {
-//            $gameScoresFor=$key->getScoreAway();
-//            array_push($myScoresFor,$gameScoresFor);
-//            $gameScoresAgainst=$key->getScoreHome();
-//            array_push($myScoresAgainst,$gameScoresAgainst);
-//          }
-//          if ($key->getResult() == 0) {
-//            array_push($myPointsFor, 1);
-//          }elseif ($name==$key->getHomeTeam() && $key->getResult() == 1) {
-//              array_push($myPointsFor, 3);
-//          }elseif ($name==$key->getAwayTeam() && $key->getResult() == 2) {
-//              array_push($myPointsFor, 3);
-//        }
-//      }
-//
-//        $totalScoresFor=array_sum($myScoresFor);
-//        $totalScoresAgainst=array_sum($myScoresAgainst);
-//        $totalPointsFor=array_sum($myPointsFor);
-//          $teamRepository=$this->getDoctrine()->getRepository('AppBundle:team');
-//          $team=$teamRepository->findOneByName($name);
-//          $team->setPointsFor($totalPointsFor);
-//          $team->setScoresFor($totalScoresFor);
-//          $team->setScoresAgainst($totalScoresAgainst);
-//          $em=$this->getDoctrine()->getManager();
-//          $em->flush();
         return ['allTeamGames'=>$allTeamGames];
 
     }
@@ -130,6 +97,11 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
         $em=$this->getDoctrine()->getManager();
         $query=$em->createQuery('SELECT team FROM AppBundle:team team ORDER BY team.pointsFor DESC');
         $table=$query->getResult();
+//        $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
+//        $homeGames = $repository->findByHomeTeam($name);
+//        $awayGames=$repository->findByAwayTeam($name);
+//        $numberOfGames=count_array(array_merge($homeGames, $awayGames));
+
         return  $this->render('@App/team/show_table.html.twig', array('allTeams'=>$table));
     }
 
