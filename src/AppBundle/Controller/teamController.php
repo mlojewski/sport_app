@@ -49,7 +49,7 @@ public function createTeamAction(Request $request)
       $em->flush();
       return $this->redirectToRoute('addTeam');
 }
-return $this->render('@App/team/create_team.html.twig', array('form'=>$form->createView(),));
+return $this->render('@App/team/create_team.html.twig', array('form'=>$form->createView()));
 }
     /**
      * @Route("/showTeam/{id}")
@@ -97,10 +97,6 @@ return $this->render('@App/team/create_team.html.twig', array('form'=>$form->cre
         $em=$this->getDoctrine()->getManager();
         $query=$em->createQuery('SELECT team FROM AppBundle:team team ORDER BY team.pointsFor DESC');
         $table=$query->getResult();
-//        $repository=$this->getDoctrine()->getRepository('AppBundle:Game');
-//        $homeGames = $repository->findByHomeTeam($name);
-//        $awayGames=$repository->findByAwayTeam($name);
-//        $numberOfGames=count_array(array_merge($homeGames, $awayGames));
 
         return  $this->render('@App/team/show_table.html.twig', array('allTeams'=>$table));
     }

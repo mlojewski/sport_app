@@ -175,7 +175,7 @@ var_dump($baseScoreAway);
         if ($baseResult != $result) {
             if ($baseResult == 1) {
                 $homeTeam->setPointsFor($homeTeam->getPointsFor() - 3);
-            } elseif ($baseResult == 0 ) {
+            } elseif ($baseResult === 0 ) {
                 $homeTeam->setPointsFor($homeTeam->getPointsFor() - 1);
                 $awayTeam->setPointsFor($awayTeam->getPointsFor() - 1);
             } elseif ($baseResult == 2) {
@@ -183,7 +183,7 @@ var_dump($baseScoreAway);
             }
             if ($result == 1) {
                 $homeTeam->setPointsFor($homeTeam->getPointsFor() + 3);
-            } elseif ($result == 0) {
+            } elseif ($result === 0) {
                 $homeTeam->setPointsFor($homeTeam->getPointsFor() + 1);
                 $awayTeam->setPointsFor($awayTeam->getPointsFor() + 1);
             } elseif ($result == 2) {
